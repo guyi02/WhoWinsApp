@@ -1,20 +1,45 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 
 import {CardProps} from './types';
 import {Container} from './styles';
 import Animated, {
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
 import {GestureDetector, Gesture} from 'react-native-gesture-handler';
+import {CARD_WIDTH} from '../utils';
 
-const Card = ({index}: CardProps) => {
+const Card = ({index, handleRealeaseAnim, handleDetail}: CardProps) => {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const context = useSharedValue({x: 0, y: 0});
+  const cardInitialRotate = useSharedValue(((index - 1) * Math.PI) / 1.5);
 
-  const moveOnObjective = false;
+  const targetY = (y: number) => y < -180;
+
+  const execVerification = (x: number, y: number) => {
+    'Worklet';
+    if (!targetY(y)) {
+      translateX.value = withSpring(0);
+      translateY.value = withSpring(0);
+      cardInitialRotate.value = withSpring(((index - 1) * Math.PI) / 1.5);
+      return;
+    }
+
+    translateY.value = withSpring(index === 1 ? -291 : -295, {
+      stiffness: 50,
+    });
+    translateX.value = withSpring(
+      (CARD_WIDTH * 2) / 2 - index * CARD_WIDTH + 12,
+      {
+        stiffness: 50,
+      },
+    );
+    cardInitialRotate.value = 0;
+    handleRealeaseAnim(index);
+  };
 
   const handleGesture = Gesture.Pan()
     .onStart(() => {
@@ -24,14 +49,11 @@ const Card = ({index}: CardProps) => {
       translateX.value = event.translationX + context.value.x;
       translateY.value = event.translationY + context.value.y;
     })
-    .onFinalize(event => {
-      if (!moveOnObjective) {
-        translateX.value = withSpring(0);
-        translateY.value = withSpring(0);
-      }
+    .onFinalize(() => {
+      runOnJS(execVerification)(translateX.value, translateY.value);
     });
 
-  const animStyle = useAnimatedStyle(() => {
+  const animStyleOnMove = useAnimatedStyle(() => {
     return {
       transform: [
         {
@@ -40,22 +62,20 @@ const Card = ({index}: CardProps) => {
         {
           translateY: translateY.value,
         },
+        {
+          rotate: cardInitialRotate.value + 'deg',
+        },
       ],
     };
   });
 
-  const rotate = ((index - 1) * Math.PI) / 1.5;
-
   return (
     <GestureDetector gesture={handleGesture}>
-      <Animated.View style={[animStyle]}>
+      <Animated.View style={[animStyleOnMove]}>
         <Container
-          onPress={() => alert(index)}
+          onPress={() => handleDetail(index)}
           style={{
-            transform: [
-              {rotate: rotate + 'deg'},
-              {translateY: index === 1 ? -4 : 0},
-            ],
+            transform: [{translateY: index === 1 ? -4 : 0}],
           }}
         />
       </Animated.View>

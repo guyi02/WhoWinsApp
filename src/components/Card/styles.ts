@@ -1,9 +1,8 @@
-import {Dimensions} from 'react-native';
 import styled from 'styled-components/native';
-const {width: deviceWidth, height: deviceHeight} = Dimensions.get('screen');
+import {CARD_WIDTH, CARD_HEIGHT} from '../utils';
 
 export const Container = styled.Pressable`
-  width: ${(deviceWidth / deviceHeight) * 180};
-  height: ${(deviceWidth / deviceHeight) * 180};
+  width: ${CARD_WIDTH};
+  height: ${CARD_HEIGHT};
   background-color: aliceblue;
 `;

@@ -1,11 +1,14 @@
 import React from 'react';
 import {SafeAreaView} from 'react-native';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Play from './src/pages/Play';
 
 const App = () => {
   return (
     <SafeAreaView>
-      <Play />
+      <GestureHandlerRootView>
+        <Play />
+      </GestureHandlerRootView>
     </SafeAreaView>
   );
 };

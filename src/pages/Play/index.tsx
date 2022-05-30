@@ -1,24 +1,23 @@
 import React from 'react';
 import {View} from 'react-native';
 import Arena from '../../components/Arena';
-import ButtonStart from '../../components/ButtonStart';
 
 import CardsOnHand from '../../components/CardsOnHand';
+import Target from '../../components/Target';
 import {Container} from './styles';
 
 const Play = () => {
   return (
     <Container>
-      <View
-        style={{
-          position: 'absolute',
-          top: '40%',
-          left: '40%',
-          zIndex: 100,
-        }}>
-        <ButtonStart />
-      </View>
       <Arena>
+        <View
+          style={{
+            position: 'absolute',
+            top: '40%',
+            left: '40%',
+          }}>
+          <Target />
+        </View>
         <View
           style={{
             transform: [{rotate: '180deg'}],
