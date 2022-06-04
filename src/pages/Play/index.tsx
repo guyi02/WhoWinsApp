@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View} from 'react-native';
 import Arena from '../../components/Arena';
 
@@ -7,6 +7,16 @@ import Target from '../../components/Target';
 import {Container} from './styles';
 
 const Play = () => {
+  const [cardOnTarget, setCardOnTarget] = useState(false);
+
+  const handleGetPosition = (pos: number) => {
+    setCardOnTarget(Number(pos.toFixed(0)) < -200);
+  };
+
+  const handleCardOnTarget = (index: number) => {
+    console.log(index);
+  };
+
   return (
     <Container>
       <Arena>
@@ -16,7 +26,7 @@ const Play = () => {
             top: '40%',
             left: '40%',
           }}>
-          <Target />
+          <Target onTarget={cardOnTarget} />
         </View>
         <View
           style={{
@@ -24,7 +34,10 @@ const Play = () => {
           }}>
           <CardsOnHand />
         </View>
-        <CardsOnHand />
+        <CardsOnHand
+          getPositionCard={pos => handleGetPosition(pos)}
+          handleCardOnTarget={index => handleCardOnTarget(index)}
+        />
       </Arena>
     </Container>
   );

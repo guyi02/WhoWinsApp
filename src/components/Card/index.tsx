@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React from 'react';
 
 import {CardProps} from './types';
 import {Container} from './styles';
@@ -11,15 +11,25 @@ import Animated, {
 import {GestureDetector, Gesture} from 'react-native-gesture-handler';
 import {CARD_WIDTH} from '../utils';
 
-const Card = ({index, handleRealeaseAnim, handleDetail}: CardProps) => {
+const Card = ({
+  index,
+  handleRealeaseAnim,
+  handleDetail,
+  getPosition,
+}: CardProps) => {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const context = useSharedValue({x: 0, y: 0});
   const cardInitialRotate = useSharedValue(((index - 1) * Math.PI) / 1.5);
 
-  const targetY = (y: number) => y < -180;
+  const targetY = (y: number) => y < -200;
 
-  const execVerification = (x: number, y: number) => {
+  const handleOnTarget = (y: number) => {
+    'Worklet';
+    getPosition(y);
+  };
+
+  const handleCardOnTarget = (x: number, y: number) => {
     'Worklet';
     if (!targetY(y)) {
       translateX.value = withSpring(0);
@@ -28,11 +38,11 @@ const Card = ({index, handleRealeaseAnim, handleDetail}: CardProps) => {
       return;
     }
 
-    translateY.value = withSpring(index === 1 ? -291 : -295, {
+    translateY.value = withSpring(index === 1 ? -320 : -325, {
       stiffness: 50,
     });
     translateX.value = withSpring(
-      (CARD_WIDTH * 2) / 2 - index * CARD_WIDTH + 12,
+      (CARD_WIDTH * 2) / 2 - index * CARD_WIDTH + 5,
       {
         stiffness: 50,
       },
@@ -48,9 +58,10 @@ const Card = ({index, handleRealeaseAnim, handleDetail}: CardProps) => {
     .onUpdate(event => {
       translateX.value = event.translationX + context.value.x;
       translateY.value = event.translationY + context.value.y;
+      runOnJS(handleOnTarget)(translateY.value);
     })
     .onFinalize(() => {
-      runOnJS(execVerification)(translateX.value, translateY.value);
+      runOnJS(handleCardOnTarget)(translateX.value, translateY.value);
     });
 
   const animStyleOnMove = useAnimatedStyle(() => {
@@ -75,6 +86,8 @@ const Card = ({index, handleRealeaseAnim, handleDetail}: CardProps) => {
         <Container
           onPress={() => handleDetail(index)}
           style={{
+            backgroundColor:
+              index === 0 ? 'red' : index === 1 ? 'gray' : 'yellow',
             transform: [{translateY: index === 1 ? -4 : 0}],
           }}
         />

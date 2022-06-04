@@ -1,5 +1,5 @@
 export type TargetProp = {
-  children: JSX.Element;
+  onTarget: boolean;
 };
 
 export type TargetContainerProp = {

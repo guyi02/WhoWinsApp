@@ -3,4 +3,5 @@ export type CardProps = {
   index: number;
   handleRealeaseAnim: (index: number) => void;
   handleDetail: (index: number) => void;
+  getPosition: (pos: number) => void;
 };

@@ -7,5 +7,5 @@ export const Container = styled.View<TargetContainerProp>`
   height: ${Number(CARD_WIDTH + 10)}px;
   justify-content: center;
   align-items: center;
-  background-color: ${({hasCard}) => (hasCard ? 'red' : 'blue')};
+  background-color: ${({hasCard}) => (hasCard ? 'green' : 'blue')};
 `;
