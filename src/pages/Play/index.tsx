@@ -5,16 +5,17 @@ import Arena from '../../components/Arena';
 import CardsOnHand from '../../components/CardsOnHand';
 import Target from '../../components/Target';
 import {Container} from './styles';
+import {CardData} from '../../components/utils/types';
 
 const Play = () => {
-  const [cardOnTarget, setCardOnTarget] = useState(false);
+  const [cardOnTarget, setCardOnTarget] = useState<CardData | null>(null);
 
   const handleGetPosition = (pos: number) => {
-    setCardOnTarget(Number(pos.toFixed(0)) < -200);
+    // setCardOnTarget(Number(pos.toFixed(0)) < -200);
   };
 
-  const handleCardOnTarget = (index: number) => {
-    console.log(index);
+  const handleCardOnTarget = (cardInfo: CardData | null) => {
+    setCardOnTarget(cardInfo);
   };
 
   return (
@@ -22,21 +23,23 @@ const Play = () => {
       <Arena>
         <View
           style={{
-            position: 'absolute',
-            top: '40%',
-            left: '40%',
-          }}>
-          <Target onTarget={cardOnTarget} />
-        </View>
-        <View
-          style={{
             transform: [{rotate: '180deg'}],
           }}>
           <CardsOnHand />
         </View>
+
+        <View
+          style={{
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Target onTarget={cardOnTarget} />
+        </View>
+
         <CardsOnHand
           getPositionCard={pos => handleGetPosition(pos)}
-          handleCardOnTarget={index => handleCardOnTarget(index)}
+          handleCardOnTarget={cardInfo => handleCardOnTarget(cardInfo)}
         />
       </Arena>
     </Container>

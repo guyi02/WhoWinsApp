@@ -1,5 +1,6 @@
+import {CardData} from '../../components/utils/types';
 export type TargetProp = {
-  onTarget: boolean;
+  onTarget: CardData | null;
 };
 
 export type TargetContainerProp = {

@@ -1,4 +1,5 @@
+import {CardData} from '../utils/types';
 export type CardsOnHandProps = {
-  handleCardOnTarget?: (index: number) => void;
+  handleCardOnTarget?: (cardData: CardData | null) => void;
   getPositionCard?: (position: number) => void;
 };
