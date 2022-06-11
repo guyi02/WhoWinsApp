@@ -15,7 +15,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import {GestureDetector, Gesture} from 'react-native-gesture-handler';
-import {CARD_SIZE} from '../utils';
+import {CARD_SIZE} from '@components/utils';
 
 const Card = ({
   cardData,

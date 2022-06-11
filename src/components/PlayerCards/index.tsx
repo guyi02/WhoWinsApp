@@ -1,11 +1,9 @@
 import React, {useCallback, useState} from 'react';
-import {View, Text} from 'react-native';
-import usePlayerTurn from '../../store/usePlayerTurn';
+import usePlayerTurn from '@store/usePlayerTurn';
 
-import Card from '../Card';
-import ModalCardDetail from '../Modal/ModalCardDetail';
-import {playerFake} from '../utils';
-import {CardData} from '../utils/types';
+import Card from '@components/Card';
+import ModalCardDetail from '@components/Modal/ModalCardDetail';
+import {CardData} from '@components/utils/types';
 
 import {Container} from './styles';
 import {PlayerCardsProps} from './types';

@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text, Pressable} from 'react-native';
+import {StyleSheet, Text, Pressable} from 'react-native';
 import Modal from 'react-native-modal';
 import {ModalCardDetailProps} from './types';
 

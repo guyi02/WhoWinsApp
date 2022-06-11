@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import {View} from 'react-native';
-import Arena from '../../components/Arena';
 
-import PlayerCards from '../../components/PlayerCards';
-import Target from '../../components/Target';
+import Arena from '@components/Arena';
+import PlayerCards from '@components/PlayerCards';
+import Target from '@components/Target';
+import {CardData} from '@components/utils/types';
 import {Container} from './styles';
-import {CardData} from '../../components/utils/types';
 
 const Play = () => {
   const [cardOnTarget, setCardOnTarget] = useState<CardData | null>(null);

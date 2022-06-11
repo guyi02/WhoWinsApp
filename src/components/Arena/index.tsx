@@ -1,12 +1,12 @@
 import React, {useEffect} from 'react';
-import Animated, {
+import {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
-import usePlayerTurn from '../../store/usePlayerTurn';
-import {Turn} from '../../store/types';
-import {getRandomPlayerTurn, playerFake} from '../utils';
+import usePlayerTurn from '@store/usePlayerTurn';
+import {Turn} from '@store/types';
+import {getRandomPlayerTurn, playerFake} from '@components/utils';
 import {ImageArena, ImageArenaOverlay} from './styles';
 import {ArenaProps} from './types';
 
