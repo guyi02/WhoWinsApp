@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {View} from 'react-native';
 import Arena from '../../components/Arena';
 
-import CardsOnHand from '../../components/CardsOnHand';
+import PlayerCards from '../../components/PlayerCards';
 import Target from '../../components/Target';
 import {Container} from './styles';
 import {CardData} from '../../components/utils/types';
@@ -11,7 +11,7 @@ const Play = () => {
   const [cardOnTarget, setCardOnTarget] = useState<CardData | null>(null);
 
   const handleGetPosition = (pos: number) => {
-    // setCardOnTarget(Number(pos.toFixed(0)) < -200);
+    // console.log(pos);
   };
 
   const handleCardOnTarget = (cardInfo: CardData | null) => {
@@ -25,7 +25,11 @@ const Play = () => {
           style={{
             transform: [{rotate: '180deg'}],
           }}>
-          <CardsOnHand />
+          <PlayerCards
+            isPlayer={false}
+            getPositionCard={pos => handleGetPosition(pos)}
+            handleCardOnTarget={cardInfo => handleCardOnTarget(cardInfo)}
+          />
         </View>
 
         <View
@@ -37,7 +41,8 @@ const Play = () => {
           <Target onTarget={cardOnTarget} />
         </View>
 
-        <CardsOnHand
+        <PlayerCards
+          isPlayer={true}
           getPositionCard={pos => handleGetPosition(pos)}
           handleCardOnTarget={cardInfo => handleCardOnTarget(cardInfo)}
         />

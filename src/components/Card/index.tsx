@@ -1,7 +1,13 @@
 import React, {useCallback, useState} from 'react';
 
 import {CardProps} from './types';
-import {Container, ActionButton, ActionButtonText, targeWidth} from './styles';
+import {
+  Container,
+  ActionButton,
+  ActionButtonText,
+  targeWidth,
+  translateYTarget,
+} from './styles';
 import Animated, {
   runOnJS,
   useAnimatedStyle,
@@ -9,7 +15,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import {GestureDetector, Gesture} from 'react-native-gesture-handler';
-import {CARD_WIDTH} from '../utils';
+import {CARD_SIZE} from '../utils';
 
 const Card = ({
   cardData,
@@ -23,7 +29,7 @@ const Card = ({
   const context = useSharedValue({x: 0, y: 0});
   const cardInitialRotate = useSharedValue(((index - 1) * Math.PI) / 1.5);
   const [isBlockedGestures, setIsBlockedGestures] = useState(false);
-  const targetY = (y: number) => y < -200;
+  const targetY = (y: number) => y < -165;
 
   const positionFromCardToTarget = useCallback(
     (Yposition: number) => {
@@ -44,10 +50,10 @@ const Card = ({
         setIsBlockedGestures(false);
         return;
       }
-      translateY.value = withSpring(index === 1 ? -320 : -325);
-      translateX.value = withSpring(
-        (CARD_WIDTH * 2) / 2 - index * CARD_WIDTH + 5,
+      translateY.value = withSpring(
+        index === 1 ? -translateYTarget - 16 : -translateYTarget - 20,
       );
+      translateX.value = withSpring((CARD_SIZE * 2) / 2 - index * CARD_SIZE);
       cardInitialRotate.value = 0;
       handleRealeaseAnim(cardData);
       setIsBlockedGestures(true);
@@ -76,7 +82,9 @@ const Card = ({
       }
     })
     .onFinalize(() => {
-      runOnJS(handleCardOnTarget)(translateY.value);
+      if (!isBlockedGestures) {
+        runOnJS(handleCardOnTarget)(translateY.value);
+      }
     });
 
   const clearCardPosition = useCallback(() => {
@@ -102,6 +110,7 @@ const Card = ({
   const animStyleOnMove = useAnimatedStyle(() => {
     return {
       position: 'relative',
+      zIndex: 1000,
       transform: [
         {
           translateX: translateX.value,
