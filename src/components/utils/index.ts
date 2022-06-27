@@ -10,6 +10,12 @@ export const CARD_HEIGHT = CARD_WIDTH;
 
 export const getRandomPlayerTurn = Math.floor(Math.random() * 2);
 
+export const getRandomInt = (min: number, max: number) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+};
+
 export const playerFake = [
   {
     id: 'epfjeogor',

@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 
 import {CardProps} from './types';
 import {
@@ -15,10 +15,13 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import {GestureDetector, Gesture} from 'react-native-gesture-handler';
-import {CARD_SIZE} from '@components/utils';
+import {CARD_SIZE, getRandomInt} from '@components/utils';
+import usePlayerTurn from '@store/usePlayerTurn';
 
 const Card = ({
+  isPlayer,
   cardData,
+  cardsToPut,
   index,
   handleRealeaseAnim,
   handleDetail,
@@ -30,6 +33,7 @@ const Card = ({
   const cardInitialRotate = useSharedValue(((index - 1) * Math.PI) / 1.5);
   const [isBlockedGestures, setIsBlockedGestures] = useState(false);
   const targetY = (y: number) => y < -165;
+  const turn = usePlayerTurn(state => state.turn);
 
   const positionFromCardToTarget = useCallback(
     (Yposition: number) => {
@@ -38,6 +42,14 @@ const Card = ({
     },
     [getPosition],
   );
+
+  const moveToTarget = useCallback(() => {
+    translateY.value = withSpring(
+      index === 1 ? -translateYTarget - 16 : -translateYTarget - 20,
+    );
+    translateX.value = withSpring((CARD_SIZE * 2) / 2 - index * CARD_SIZE);
+    cardInitialRotate.value = 0;
+  }, [cardInitialRotate, index, translateX, translateY]);
 
   const handleCardOnTarget = useCallback(
     (Yposition: number) => {
@@ -50,19 +62,14 @@ const Card = ({
         setIsBlockedGestures(false);
         return;
       }
-      translateY.value = withSpring(
-        index === 1 ? -translateYTarget - 16 : -translateYTarget - 20,
-      );
-      translateX.value = withSpring((CARD_SIZE * 2) / 2 - index * CARD_SIZE);
-      cardInitialRotate.value = 0;
-      handleRealeaseAnim(cardData);
+      moveToTarget();
       setIsBlockedGestures(true);
     },
     [
-      cardData,
       cardInitialRotate,
       handleRealeaseAnim,
       index,
+      moveToTarget,
       translateX,
       translateY,
     ],
@@ -125,6 +132,13 @@ const Card = ({
     };
   });
 
+  useEffect(() => {
+    if (cardsToPut.length > 0 && cardsToPut[0].id === cardData.id) {
+      moveToTarget();
+      handleRealeaseAnim(cardData);
+    }
+  }, [cardData, cardsToPut, handleRealeaseAnim, moveToTarget]);
+
   return (
     <GestureDetector gesture={handleGesture}>
       <Animated.View style={[animStyleOnMove]}>
@@ -140,6 +154,7 @@ const Card = ({
           {isBlockedGestures && (
             <>
               <ActionButton
+                onPress={() => handleRealeaseAnim(cardData)}
                 style={{
                   left: targeWidth + 10,
                 }}>
@@ -147,7 +162,7 @@ const Card = ({
               </ActionButton>
 
               <ActionButton
-                onPress={runOnJS(clearCardPosition)}
+                onPress={clearCardPosition}
                 style={{top: targeWidth + 10}}>
                 <ActionButtonText>Back</ActionButtonText>
               </ActionButton>

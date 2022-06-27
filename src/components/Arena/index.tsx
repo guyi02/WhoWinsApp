@@ -9,6 +9,7 @@ import {Turn} from '@store/types';
 import {getRandomPlayerTurn, playerFake} from '@components/utils';
 import {ImageArena, ImageArenaOverlay} from './styles';
 import {ArenaProps} from './types';
+import {Text, View} from 'react-native';
 
 const imagePlay = require('../../../assets/play-image.jpg');
 
@@ -54,6 +55,15 @@ const Arena = ({children}: ArenaProps) => {
 
   return (
     <ImageArena source={imagePlay} resizeMode="cover">
+      <View
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+        }}>
+        <Text style={{color: '#fff'}}>vez do {turn.type}</Text>
+      </View>
       <ImageArenaOverlay style={[rotateStyle]}>{children}</ImageArenaOverlay>
     </ImageArena>
   );

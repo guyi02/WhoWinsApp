@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import usePlayerTurn from '@store/usePlayerTurn';
 
 import Card from '@components/Card';
@@ -7,47 +7,35 @@ import {CardData} from '@components/utils/types';
 
 import {Container} from './styles';
 import {PlayerCardsProps} from './types';
-
-const data: CardData[] = [
-  {
-    id: 1,
-    name: 'snfc11',
-    value: 109.9,
-    dy: 1.05,
-  },
-  {
-    id: 2,
-    name: 'mxrf11',
-    value: 10.4,
-    dy: 1.01,
-  },
-  {
-    id: 3,
-    name: 'deva11',
-    value: 100.35,
-    dy: 1.43,
-  },
-];
+import {getRandomInt} from '@components/utils';
 
 const PlayerCards = ({
+  handCards,
   isPlayer,
   handleCardOnTarget,
   getPositionCard,
 }: PlayerCardsProps) => {
-  const setTurn = usePlayerTurn(state => state.setTurn);
   const turn = usePlayerTurn(state => state.turn);
-  const [state, setSTate] = useState(false);
-  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const [cardsToPut, setCardsToPut] = useState<CardData[]>([]);
+  const randonCardByIndex = getRandomInt(0, handCards.length);
+
+  useEffect(() => {
+    if (turn.id !== '' && turn.type === 'IA' && !turn.ready && !isPlayer) {
+      setTimeout(() => {
+        setCardsToPut([handCards[randonCardByIndex]]);
+      }, 7000);
+    }
+  }, [handCards, isPlayer, randonCardByIndex, turn.id, turn.ready, turn.type]);
 
   const handleTarget = useCallback(
     (cardInfo: CardData | null) => {
       if (handleCardOnTarget) {
         handleCardOnTarget(cardInfo);
-        turn.ready = true;
-        setTurn(turn);
+        setCardsToPut([]);
       }
     },
-    [handleCardOnTarget, setTurn, turn],
+    [handleCardOnTarget],
   );
 
   const handleDetail = useCallback(index => {
@@ -70,14 +58,15 @@ const PlayerCards = ({
         hideModal={() => setIsOpenModal(false)}
       />
       <Container>
-        {data.map((cardData, index) => {
+        {handCards.map((cardData, index) => {
           return (
             <Card
               key={cardData.id}
-              cardData={cardData}
-              getPosition={position => handlePosition(position)}
               index={index}
-              isEnemy={state}
+              cardData={cardData}
+              cardsToPut={cardsToPut}
+              getPosition={position => handlePosition(position)}
+              isPlayer={isPlayer}
               handleRealeaseAnim={cardInfo => handleTarget(cardInfo)}
               handleDetail={cardIndex => handleDetail(cardIndex)}
             />

@@ -2,7 +2,8 @@ import {CardData} from '../utils/types';
 
 export type CardProps = {
   cardData: CardData;
-  isEnemy: boolean;
+  cardsToPut: CardData[];
+  isPlayer: boolean;
   index: number;
   handleRealeaseAnim: (cardData: CardData | null) => void;
   handleDetail: (index: number) => void;
