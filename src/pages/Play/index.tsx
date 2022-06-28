@@ -4,13 +4,14 @@ import {View} from 'react-native';
 import Arena from '@components/Arena';
 import PlayerCards from '@components/PlayerCards';
 import Target from '@components/Target';
-import {CardData} from '@components/utils/types';
+import {CardData} from '@store/types';
 import {Container} from './styles';
 import usePlayerTurn from '@store/usePlayerTurn';
 
 const Play = () => {
   const setTurn = usePlayerTurn(state => state.setTurn);
   const turn = usePlayerTurn(state => state.turn);
+  const setBattleCards = usePlayerTurn(state => state.setBattleCards);
   const [cardOnTarget, setCardOnTarget] = useState<CardData | null>(null);
   const [playerCards, setPlayerCards] = useState<CardData[] | []>([
     {
@@ -68,11 +69,13 @@ const Play = () => {
           );
         }
         turn.ready = true;
+
         // setCardOnTarget(cardInfo);
         setTurn(turn);
+        setBattleCards([cardInfo]);
       }
     },
-    [setTurn, turn],
+    [setBattleCards, setTurn, turn],
   );
 
   return (

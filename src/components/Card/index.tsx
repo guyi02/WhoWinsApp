@@ -15,11 +15,9 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import {GestureDetector, Gesture} from 'react-native-gesture-handler';
-import {CARD_SIZE, getRandomInt} from '@components/utils';
-import usePlayerTurn from '@store/usePlayerTurn';
+import {CARD_SIZE} from '@components/utils';
 
 const Card = ({
-  isPlayer,
   cardData,
   cardsToPut,
   index,
@@ -33,7 +31,6 @@ const Card = ({
   const cardInitialRotate = useSharedValue(((index - 1) * Math.PI) / 1.5);
   const [isBlockedGestures, setIsBlockedGestures] = useState(false);
   const targetY = (y: number) => y < -165;
-  const turn = usePlayerTurn(state => state.turn);
 
   const positionFromCardToTarget = useCallback(
     (Yposition: number) => {

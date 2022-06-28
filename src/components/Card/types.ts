@@ -1,4 +1,4 @@
-import {CardData} from '../utils/types';
+import {CardData} from '@store/types';
 
 export type CardProps = {
   cardData: CardData;

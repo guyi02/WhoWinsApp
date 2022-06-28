@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -10,13 +10,29 @@ import {getRandomPlayerTurn, playerFake} from '@components/utils';
 import {ImageArena, ImageArenaOverlay} from './styles';
 import {ArenaProps} from './types';
 import {Text, View} from 'react-native';
-
-const imagePlay = require('../../../assets/play-image.jpg');
+import shallow from 'zustand/shallow';
+const imagePlay = require('../../assets/play-image.jpg');
 
 const Arena = ({children}: ArenaProps) => {
   const setTurn = usePlayerTurn(state => state.setTurn);
   const turn = usePlayerTurn(state => state.turn);
+  const battleCards = usePlayerTurn(state => state.battleCards);
+  const setBattleCards = usePlayerTurn(state => state.setBattleCards);
   const rotateArena = useSharedValue(0);
+
+  const nextTurn = useCallback(() => {
+    const newPlayerTurn = playerFake.find(player => player.id !== turn.id);
+    if (newPlayerTurn) {
+      newPlayerTurn.ready = false;
+      setTimeout(() => {
+        rotateArena.value = withSpring(rotateArena.value === 180 ? 0 : 180);
+        setTurn(newPlayerTurn);
+        if (battleCards.length === 2) {
+          setBattleCards([]);
+        }
+      }, 5000);
+    }
+  }, [battleCards.length, rotateArena, setBattleCards, setTurn, turn.id]);
 
   useEffect(() => {
     if (turn.id === '') {
@@ -24,7 +40,7 @@ const Arena = ({children}: ArenaProps) => {
       setTurn(turnCreated);
       if (turnCreated.type === Turn.IA) {
         setTimeout(() => {
-          rotateArena.value = withSpring(180);
+          rotateArena.value = withSpring(rotateArena.value === 180 ? 0 : 180);
         }, 5000);
       }
     }
@@ -32,16 +48,16 @@ const Arena = ({children}: ArenaProps) => {
 
   useEffect(() => {
     if (turn.ready) {
-      const newPlayerTurn = playerFake.find(player => player.id !== turn.id);
-      if (newPlayerTurn) {
-        newPlayerTurn.ready = false;
+      if (battleCards.length === 2) {
+        // TODO add battle here
         setTimeout(() => {
-          rotateArena.value = withSpring(rotateArena.value === 180 ? 0 : 180);
-          setTurn(newPlayerTurn);
-        }, 5000);
+          nextTurn();
+        }, 1000);
+      } else {
+        nextTurn();
       }
     }
-  }, [rotateArena, setTurn, turn.id, turn.ready]);
+  }, [battleCards.length, nextTurn, turn.ready]);
 
   const rotateStyle = useAnimatedStyle(() => {
     return {

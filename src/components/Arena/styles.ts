@@ -1,7 +1,7 @@
 import Animated from 'react-native-reanimated';
 import styled from 'styled-components/native';
 
-export const ImageArena = styled.ImageBackground`
+export const ImageArena = styled.ImageBackground<{children?: React.ReactNode}>`
   flex: 1;
 `;
 

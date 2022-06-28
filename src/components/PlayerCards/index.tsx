@@ -3,7 +3,7 @@ import usePlayerTurn from '@store/usePlayerTurn';
 
 import Card from '@components/Card';
 import ModalCardDetail from '@components/Modal/ModalCardDetail';
-import {CardData} from '@components/utils/types';
+import {CardData} from '@store/types';
 
 import {Container} from './styles';
 import {PlayerCardsProps} from './types';
@@ -16,17 +16,24 @@ const PlayerCards = ({
   getPositionCard,
 }: PlayerCardsProps) => {
   const turn = usePlayerTurn(state => state.turn);
+  const battleCards = usePlayerTurn(state => state.battleCards);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [cardsToPut, setCardsToPut] = useState<CardData[]>([]);
-  const randonCardByIndex = getRandomInt(0, handCards.length);
 
   useEffect(() => {
-    if (turn.id !== '' && turn.type === 'IA' && !turn.ready && !isPlayer) {
+    if (
+      turn.id !== '' &&
+      turn.type === 'IA' &&
+      !turn.ready &&
+      !isPlayer &&
+      battleCards.length < 2 &&
+      handCards.length > 0
+    ) {
       setTimeout(() => {
-        setCardsToPut([handCards[randonCardByIndex]]);
+        setCardsToPut([handCards[getRandomInt(0, handCards.length)]]);
       }, 7000);
     }
-  }, [handCards, isPlayer, randonCardByIndex, turn.id, turn.ready, turn.type]);
+  }, [battleCards.length, handCards, isPlayer, turn.id, turn.ready, turn.type]);
 
   const handleTarget = useCallback(
     (cardInfo: CardData | null) => {
