@@ -1,4 +1,4 @@
-import {CardData} from '@store/types';
+import {CardData} from '@store/usePlayerTurn/types';
 
 export type CardProps = {
   cardData: CardData;

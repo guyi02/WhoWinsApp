@@ -35,9 +35,9 @@ const Card = ({
   const positionFromCardToTarget = useCallback(
     (Yposition: number) => {
       'Worklet';
-      getPosition(Yposition);
+      getPosition(Yposition + context.value.y);
     },
-    [getPosition],
+    [context.value.y, getPosition],
   );
 
   const moveToTarget = useCallback(() => {
@@ -100,6 +100,7 @@ const Card = ({
       cardInitialRotate.value = withSpring(((index - 1) * Math.PI) / 1.5);
       setIsBlockedGestures(false);
       handleRealeaseAnim(null);
+      getPosition(0);
     }
   }, [
     cardInitialRotate,
@@ -109,6 +110,7 @@ const Card = ({
     isBlockedGestures,
     translateX,
     translateY,
+    getPosition,
   ]);
 
   const animStyleOnMove = useAnimatedStyle(() => {

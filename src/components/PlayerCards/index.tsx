@@ -1,9 +1,10 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import usePlayerTurn from '@store/usePlayerTurn';
+import useBattlePhase from '@store/useBattlePhase';
 
 import Card from '@components/Card';
 import ModalCardDetail from '@components/Modal/ModalCardDetail';
-import {CardData} from '@store/types';
+import {CardData} from '@store/usePlayerTurn/types';
 
 import {Container} from './styles';
 import {PlayerCardsProps} from './types';
@@ -16,7 +17,9 @@ const PlayerCards = ({
   getPositionCard,
 }: PlayerCardsProps) => {
   const turn = usePlayerTurn(state => state.turn);
-  const battleCards = usePlayerTurn(state => state.battleCards);
+  const cardsOnBoard = usePlayerTurn(state => state.cardsOnBoard);
+  const phase = useBattlePhase(state => state.phase);
+  const setBattlePhase = useBattlePhase(state => state.setBattlePhase);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [cardsToPut, setCardsToPut] = useState<CardData[]>([]);
 
@@ -26,23 +29,34 @@ const PlayerCards = ({
       turn.type === 'IA' &&
       !turn.ready &&
       !isPlayer &&
-      battleCards.length < 2 &&
+      cardsOnBoard.length < 2 &&
       handCards.length > 0
     ) {
       setTimeout(() => {
         setCardsToPut([handCards[getRandomInt(0, handCards.length)]]);
       }, 7000);
     }
-  }, [battleCards.length, handCards, isPlayer, turn.id, turn.ready, turn.type]);
+  }, [
+    cardsOnBoard.length,
+    handCards,
+    isPlayer,
+    turn.id,
+    turn.ready,
+    turn.type,
+  ]);
 
   const handleTarget = useCallback(
     (cardInfo: CardData | null) => {
       if (handleCardOnTarget) {
         handleCardOnTarget(cardInfo);
         setCardsToPut([]);
+        setBattlePhase({
+          ...phase,
+          isShuffle: false,
+        });
       }
     },
-    [handleCardOnTarget],
+    [handleCardOnTarget, phase, setBattlePhase],
   );
 
   const handleDetail = useCallback(index => {

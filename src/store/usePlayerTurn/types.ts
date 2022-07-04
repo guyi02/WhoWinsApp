@@ -18,7 +18,7 @@ export type PlayerTurn = {
 
 export type TurnStore = {
   turn: PlayerTurn;
-  battleCards: CardData[];
+  cardsOnBoard: CardData[];
   setTurn: (playerTurn: PlayerTurn) => void;
-  setBattleCards: (cardData: CardData[]) => void;
+  setCardsOnBoard: (cardData: CardData[]) => void;
 };

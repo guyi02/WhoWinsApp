@@ -1,18 +1,20 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {View} from 'react-native';
 
 import Arena from '@components/Arena';
 import PlayerCards from '@components/PlayerCards';
 import Target from '@components/Target';
-import {CardData} from '@store/types';
+import {CardData} from '@store/usePlayerTurn/types';
 import {Container} from './styles';
 import usePlayerTurn from '@store/usePlayerTurn';
+import useBattlePhase from '@store/useBattlePhase';
 
 const Play = () => {
   const setTurn = usePlayerTurn(state => state.setTurn);
   const turn = usePlayerTurn(state => state.turn);
-  const setBattleCards = usePlayerTurn(state => state.setBattleCards);
-  const [cardOnTarget, setCardOnTarget] = useState<CardData | null>(null);
+  const setCardsOnBoard = usePlayerTurn(state => state.setCardsOnBoard);
+  const phase = useBattlePhase(state => state.phase);
+  const [cardOnTarget, setCardOnTarget] = useState<boolean>(false);
   const [playerCards, setPlayerCards] = useState<CardData[] | []>([
     {
       id: 1,
@@ -54,8 +56,26 @@ const Play = () => {
     },
   ]);
 
+  const shuffleCard = useCallback(() => {
+    if (turn.type === 'IA') {
+      console.log('compra carta enemy');
+    } else {
+      console.log('compra carta player');
+    }
+  }, [turn.type]);
+
+  useEffect(() => {
+    if (phase.isShuffle) {
+      shuffleCard();
+    }
+  }, [phase.isShuffle, shuffleCard]);
+
   const handleGetPosition = (pos: number) => {
-    // console.log(pos);
+    if (pos < -140) {
+      setCardOnTarget(true);
+    } else {
+      setCardOnTarget(false);
+    }
   };
 
   const handleCardOnTarget = useCallback(
@@ -72,10 +92,10 @@ const Play = () => {
 
         // setCardOnTarget(cardInfo);
         setTurn(turn);
-        setBattleCards([cardInfo]);
+        setCardsOnBoard([cardInfo]);
       }
     },
-    [setBattleCards, setTurn, turn],
+    [setCardsOnBoard, setTurn, turn],
   );
 
   return (

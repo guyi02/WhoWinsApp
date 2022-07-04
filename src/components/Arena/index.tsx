@@ -5,19 +5,21 @@ import {
   withSpring,
 } from 'react-native-reanimated';
 import usePlayerTurn from '@store/usePlayerTurn';
-import {Turn} from '@store/types';
+import {Turn} from '@store/usePlayerTurn/types';
 import {getRandomPlayerTurn, playerFake} from '@components/utils';
 import {ImageArena, ImageArenaOverlay} from './styles';
 import {ArenaProps} from './types';
 import {Text, View} from 'react-native';
-import shallow from 'zustand/shallow';
+import useBattlePhase from '@store/useBattlePhase';
 const imagePlay = require('../../assets/play-image.jpg');
 
 const Arena = ({children}: ArenaProps) => {
   const setTurn = usePlayerTurn(state => state.setTurn);
   const turn = usePlayerTurn(state => state.turn);
-  const battleCards = usePlayerTurn(state => state.battleCards);
-  const setBattleCards = usePlayerTurn(state => state.setBattleCards);
+  const cardsOnBoard = usePlayerTurn(state => state.cardsOnBoard);
+  const setCardsOnBoard = usePlayerTurn(state => state.setCardsOnBoard);
+  const phase = useBattlePhase(state => state.phase);
+  const setBattlePhase = useBattlePhase(state => state.setBattlePhase);
   const rotateArena = useSharedValue(0);
 
   const nextTurn = useCallback(() => {
@@ -27,28 +29,39 @@ const Arena = ({children}: ArenaProps) => {
       setTimeout(() => {
         rotateArena.value = withSpring(rotateArena.value === 180 ? 0 : 180);
         setTurn(newPlayerTurn);
-        if (battleCards.length === 2) {
-          setBattleCards([]);
+        setBattlePhase({...phase, isShuffle: true});
+        if (cardsOnBoard.length === 2) {
+          setBattlePhase({...phase, isShuffle: false, isStandBy: true});
+          setCardsOnBoard([]);
         }
       }, 5000);
     }
-  }, [battleCards.length, rotateArena, setBattleCards, setTurn, turn.id]);
+  }, [
+    cardsOnBoard.length,
+    phase,
+    rotateArena,
+    setCardsOnBoard,
+    setBattlePhase,
+    setTurn,
+    turn.id,
+  ]);
 
   useEffect(() => {
     if (turn.id === '') {
       const turnCreated = playerFake[getRandomPlayerTurn];
       setTurn(turnCreated);
+      setBattlePhase({...phase, isShuffle: true});
       if (turnCreated.type === Turn.IA) {
         setTimeout(() => {
           rotateArena.value = withSpring(rotateArena.value === 180 ? 0 : 180);
         }, 5000);
       }
     }
-  }, [rotateArena, setTurn, turn.id]);
+  }, [phase, rotateArena, setBattlePhase, setTurn, turn.id]);
 
   useEffect(() => {
     if (turn.ready) {
-      if (battleCards.length === 2) {
+      if (cardsOnBoard.length === 2) {
         // TODO add battle here
         setTimeout(() => {
           nextTurn();
@@ -57,7 +70,7 @@ const Arena = ({children}: ArenaProps) => {
         nextTurn();
       }
     }
-  }, [battleCards.length, nextTurn, turn.ready]);
+  }, [cardsOnBoard.length, nextTurn, turn.ready]);
 
   const rotateStyle = useAnimatedStyle(() => {
     return {

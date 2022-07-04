@@ -3,21 +3,20 @@ import {PlayerTurn, Turn, TurnStore, CardData} from './types';
 
 const usePlayerTurn = create<TurnStore>((set: SetState<TurnStore>) => ({
   turn: {
-    type: Turn.Player,
     id: '',
+    type: Turn.Player,
     ready: false,
-    battleCards: [],
   },
-  battleCards: [],
+  cardsOnBoard: [],
   setTurn: (playerTurn: PlayerTurn) => {
     set(() => ({
       turn: playerTurn,
     }));
   },
-  setBattleCards: (battleCards: CardData[]) => {
-    const existsCards = battleCards.length > 0;
+  setCardsOnBoard: (cards: CardData[]) => {
+    const existsCards = cards.length > 0;
     set(state => ({
-      battleCards: existsCards ? [...state.battleCards, ...battleCards] : [],
+      cardsOnBoard: existsCards ? [...state.cardsOnBoard, ...cards] : [],
     }));
   },
 }));
