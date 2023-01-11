@@ -1,4 +1,9 @@
 {
   "name": "WhoWins",
-  "displayName": "WhoWins"
+  "displayName": "WhoWins",
+  "extra": {
+    "eas": {
+      "projectId": "d0ccd495-f130-46ae-97d5-2165b985e505"
+    }
+  }
 }
