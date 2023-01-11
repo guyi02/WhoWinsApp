@@ -62,7 +62,7 @@ const Arena = ({children}: ArenaProps) => {
   useEffect(() => {
     if (turn.ready) {
       if (cardsOnBoard.length === 2) {
-        // TODO add battle here
+        // TODO add battle here teste
         setTimeout(() => {
           nextTurn();
         }, 1000);
